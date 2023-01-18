@@ -12,12 +12,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-type MongoInstance struct {
+type MongoDBInstance struct {
 	Client *mongo.Client
-	DB *mongo.Database
+	Database *mongo.Database
 }
 
-var mongoInstance MongoInstance
+var MongoDB MongoDBInstance
 
 func connectDB() {
 	client, err := mongo.NewClient(options.Client().ApplyURI(config.GetMongoURI()))	
@@ -40,8 +40,8 @@ func connectDB() {
 
 	fmt.Println("Database connected!")
 
-	mongoInstance = MongoInstance{
+	MongoDB = MongoDBInstance{
 		Client: client,
-		DB: client.Database(config.GetMongoDatabase()),
+		Database: client.Database(config.GetMongoDatabase()),
 	}
 }

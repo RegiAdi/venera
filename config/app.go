@@ -11,3 +11,7 @@ func GetAppENV() string {
 func GetAppPort() string {
 	return os.Getenv("APP_PORT")
 }
+
+func GetAppTimezone() string {
+	return os.Getenv("APP_TIMEZONE")
+}
