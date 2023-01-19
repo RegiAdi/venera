@@ -3,6 +3,9 @@ package helpers
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"time"
+
+	"github.com/RegiAdi/pos-mobile-backend/config"
 )
 
 // GenerateRandomBytes returns securely generated random bytes.
@@ -26,4 +29,11 @@ func GenerateAPIToken() (string, error) {
     b, err := generateRandomBytes(32)
 
     return base64.URLEncoding.EncodeToString(b), err
+}
+
+func GenerateAPITokenExpiration() time.Time {
+	currentTime := GetCurrentTime()
+
+	return currentTime.AddDate(0, 0, config.GetTokenDuration())
+	// return currentTime.AddDate(0, 0, -1)
 }

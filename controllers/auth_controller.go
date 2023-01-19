@@ -11,6 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func Login(c *fiber.Ctx) error {
@@ -51,10 +52,17 @@ func Login(c *fiber.Ctx) error {
 	}
 	
 	apiToken, _ := helpers.GenerateAPIToken()
+	apiTokenExpirationDate := helpers.GenerateAPITokenExpiration()
 	filter := bson.D{{"_id", user.ID}}
-	update := bson.D{{"$set", bson.D{{"api_token", apiToken}}}}
+	update := bson.D{
+		{"$set", bson.D{
+			{"api_token", apiToken}, 
+			{"token_expires_at", apiTokenExpirationDate},
+			{"updated_at", helpers.GetCurrentTime()},
+		},
+	}}
 
-	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+	err = userCollection.FindOneAndUpdate(context.TODO(), filter, update, options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&user)
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -67,7 +75,7 @@ func Login(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"message": "User authenticated successfully",
-		"data": apiToken,
+		"data": user,
 	})
 }
 
