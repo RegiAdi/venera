@@ -8,6 +8,7 @@ import (
 	"github.com/RegiAdi/pos-mobile-backend/bootstrap"
 	"github.com/RegiAdi/pos-mobile-backend/helpers"
 	"github.com/RegiAdi/pos-mobile-backend/models"
+	"github.com/RegiAdi/pos-mobile-backend/responses"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -22,6 +23,7 @@ func Login(c *fiber.Ctx) error {
 
 	var request models.User
 	var user models.User
+	var userLoginResponse responses.UserLoginResponse
 
 	if err := c.BodyParser(&request); err != nil {
 		log.Println(err)
@@ -62,7 +64,7 @@ func Login(c *fiber.Ctx) error {
 		},
 	}}
 
-	err = userCollection.FindOneAndUpdate(context.TODO(), filter, update, options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&user)
+	err = userCollection.FindOneAndUpdate(context.TODO(), filter, update, options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&userLoginResponse)
 
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -75,7 +77,7 @@ func Login(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"message": "User authenticated successfully",
-		"data": user,
+		"data": userLoginResponse,
 	})
 }
 

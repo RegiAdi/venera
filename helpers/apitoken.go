@@ -35,5 +35,4 @@ func GenerateAPITokenExpiration() time.Time {
 	currentTime := GetCurrentTime()
 
 	return currentTime.AddDate(0, 0, config.GetTokenDuration())
-	// return currentTime.AddDate(0, 0, -1)
 }
