@@ -21,5 +21,6 @@ func API(app *fiber.App) {
         return c.SendString("Hello, World 👋!")
     })
 
+	auth.Get("/logout", controllers.Logout)
 	api.Get("/userinfo", controllers.GetUserInfo)
 }

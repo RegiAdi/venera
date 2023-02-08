@@ -82,6 +82,40 @@ func Login(c *fiber.Ctx) error {
 	})
 }
 
+func Logout(c *fiber.Ctx) error {
+	userCollection := bootstrap.MongoDB.Database.Collection("users")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
+	defer cancel()
+
+	reqHeader := c.GetReqHeaders()
+
+	filter := bson.D{{"api_token", reqHeader["Authorization"]}}
+	update := bson.D{
+		{"$set", bson.D{
+			{"api_token", nil}, 
+			{"token_expires_at", time.Time{}},
+			{"updated_at", helpers.GetCurrentTime()},
+		},
+	}}
+
+	result, err := userCollection.UpdateOne(ctx, filter, update)
+
+	if err != nil || result.ModifiedCount == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to destroy API Token",
+			"error": err,
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"message": "User logged out successfully",
+		"data": nil,
+	})
+}
+
 func Register(c *fiber.Ctx) error {
 	userCollection := bootstrap.MongoDB.Database.Collection("users")
 
