@@ -59,6 +59,7 @@ func Login(c *fiber.Ctx) error {
 	update := bson.D{
 		{"$set", bson.D{
 			{"api_token", apiToken}, 
+			{"device_name", request.DeviceName}, 
 			{"token_expires_at", apiTokenExpirationDate},
 			{"updated_at", helpers.GetCurrentTime()},
 		},
