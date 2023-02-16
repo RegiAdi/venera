@@ -8,7 +8,7 @@ import (
 
 func API(app *fiber.App) {
 	api := app.Group("/api")
-	
+
 	api.Group("/auth")
 	auth := api.Group("/auth")
 
@@ -18,9 +18,11 @@ func API(app *fiber.App) {
 	app.Use(shrine.New())
 
 	api.Get("/", func(c *fiber.Ctx) error {
-        return c.SendString("Hello, World 👋!")
-    })
+		return c.SendString("Hello, World 👋!")
+	})
 
 	auth.Get("/logout", controllers.Logout)
 	api.Get("/userinfo", controllers.GetUserInfo)
+
+	api.Post("/products", controllers.CreateProduct)
 }
