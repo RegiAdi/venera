@@ -18,7 +18,7 @@ import (
 func Login(c *fiber.Ctx) error {
 	userCollection := bootstrap.MongoDB.Database.Collection("users")
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	var request models.User
@@ -31,7 +31,7 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "Failed to parse body",
-			"error": err,
+			"error":   err,
 		})
 	}
 
@@ -41,7 +41,7 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"success": false,
 			"message": "User not found",
-			"error": err,
+			"error":   err,
 		})
 	}
 
@@ -49,21 +49,21 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"success": false,
 			"message": "Password do not match",
-			"error": nil,
+			"error":   nil,
 		})
 	}
-	
+
 	apiToken, _ := helpers.GenerateAPIToken()
 	apiTokenExpirationDate := helpers.GenerateAPITokenExpiration()
 	filter := bson.D{{"_id", user.ID}}
 	update := bson.D{
 		{"$set", bson.D{
-			{"api_token", apiToken}, 
-			{"device_name", request.DeviceName}, 
+			{"api_token", apiToken},
+			{"device_name", request.DeviceName},
 			{"token_expires_at", apiTokenExpirationDate},
 			{"updated_at", helpers.GetCurrentTime()},
 		},
-	}}
+		}}
 
 	err = userCollection.FindOneAndUpdate(context.TODO(), filter, update, options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&userLoginResponse)
 
@@ -71,21 +71,21 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "Failed to generate API Token",
-			"error": err,
+			"error":   err,
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"message": "User authenticated successfully",
-		"data": userLoginResponse,
+		"data":    userLoginResponse,
 	})
 }
 
 func Logout(c *fiber.Ctx) error {
 	userCollection := bootstrap.MongoDB.Database.Collection("users")
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	reqHeader := c.GetReqHeaders()
@@ -93,33 +93,33 @@ func Logout(c *fiber.Ctx) error {
 	filter := bson.D{{"api_token", reqHeader["Authorization"]}}
 	update := bson.D{
 		{"$set", bson.D{
-			{"api_token", nil}, 
+			{"api_token", nil},
 			{"token_expires_at", time.Time{}},
 			{"updated_at", helpers.GetCurrentTime()},
 		},
-	}}
+		}}
 
 	result, err := userCollection.UpdateOne(ctx, filter, update)
 
-	if err != nil || result.ModifiedCount == 0 {
+	if err != nil || result.ModifiedCount < 1 {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
-			"message": "Failed to destroy API Token",
-			"error": err,
+			"message": "Failed to delete API Token",
+			"error":   err,
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"message": "User logged out successfully",
-		"data": nil,
+		"data":    nil,
 	})
 }
 
 func Register(c *fiber.Ctx) error {
 	userCollection := bootstrap.MongoDB.Database.Collection("users")
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	user := new(models.User)
@@ -128,35 +128,35 @@ func Register(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"success": false,
 			"message": "Failed to parse body",
-			"error": err,
+			"error":   err,
 		})
-	}	
+	}
 
 	usernameCount, _ := userCollection.CountDocuments(ctx, bson.D{{"username", user.Username}})
 	if usernameCount > 0 {
-        return c.Status(fiber.StatusConflict).JSON(fiber.Map{
-            "success": false,
-            "message": "Username already exist",
-            "error": nil,
-        })
+		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+			"success": false,
+			"message": "Username already exist",
+			"error":   nil,
+		})
 	}
 
 	emailCount, _ := userCollection.CountDocuments(ctx, bson.D{{"email", user.Email}})
 	if emailCount > 0 {
-        return c.Status(fiber.StatusConflict).JSON(fiber.Map{
-            "success": false,
-            "message": "Email already exist",
-            "error": nil,
-        })
+		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
+			"success": false,
+			"message": "Email already exist",
+			"error":   nil,
+		})
 	}
 
 	password, err := helpers.HashPassword(user.Password)
 	if err != nil {
-        return c.Status(500).JSON(fiber.Map{
-            "success": false,
-            "message": "User registration failed",
-            "error": err,
-        })
+		return c.Status(500).JSON(fiber.Map{
+			"success": false,
+			"message": "User registration failed",
+			"error":   err,
+		})
 	}
 
 	user.Password = password
@@ -164,17 +164,17 @@ func Register(c *fiber.Ctx) error {
 	user.UpdatedAt = primitive.NewDateTimeFromTime(helpers.GetCurrentTime())
 
 	result, err := userCollection.InsertOne(ctx, user)
-    if err != nil {
-        return c.Status(500).JSON(fiber.Map{
-            "success": false,
-            "message": "User registration failed",
-            "error":   err,
-        })
-    }
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{
+			"success": false,
+			"message": "User registration failed",
+			"error":   err,
+		})
+	}
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-        "data": result,
-        "success": true,
-        "message": "User created successfully",
-    })
+		"data":    result,
+		"success": true,
+		"message": "User created successfully",
+	})
 }

@@ -27,4 +27,5 @@ func API(app *fiber.App) {
 	api.Get("/products", controllers.GetProducts)
 	api.Get("/products/:id", controllers.GetProduct)
 	api.Post("/products", controllers.CreateProduct)
+	api.Delete("/products/:id", controllers.DeleteProduct)
 }

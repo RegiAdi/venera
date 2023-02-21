@@ -113,3 +113,27 @@ func CreateProduct(c *fiber.Ctx) error {
 		"message": "Product created successfully",
 	})
 }
+
+func DeleteProduct(c *fiber.Ctx) error {
+	productCollection := bootstrap.MongoDB.Database.Collection("products")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	objID, _ := primitive.ObjectIDFromHex(c.Params("id"))
+	result, err := productCollection.DeleteOne(ctx, bson.M{"_id": objID})
+
+	if err != nil || result.DeletedCount < 1 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to delete product",
+			"error":   err,
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"message": "Product deleted successfully",
+		"data":    nil,
+	})
+}
