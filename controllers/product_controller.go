@@ -8,8 +8,35 @@ import (
 	"github.com/RegiAdi/pos-mobile-backend/helpers"
 	"github.com/RegiAdi/pos-mobile-backend/models"
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
+
+func GetProduct(c *fiber.Ctx) error {
+	productCollection := bootstrap.MongoDB.Database.Collection("products")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	var product models.Product
+
+	objID, _ := primitive.ObjectIDFromHex(c.Params("id"))
+	err := productCollection.FindOne(ctx, bson.M{"_id": objID}).Decode(&product)
+
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "Product not found",
+			"error":   err,
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"message": "Product retrieved successfully",
+		"data":    product,
+	})
+}
 
 func CreateProduct(c *fiber.Ctx) error {
 	productCollection := bootstrap.MongoDB.Database.Collection("products")

@@ -24,5 +24,6 @@ func API(app *fiber.App) {
 	auth.Get("/logout", controllers.Logout)
 	api.Get("/userinfo", controllers.GetUserInfo)
 
+	api.Get("/products/:id", controllers.GetProduct)
 	api.Post("/products", controllers.CreateProduct)
 }
