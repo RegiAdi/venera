@@ -112,7 +112,6 @@ func Logout(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"message": "User logged out successfully",
-		"data":    nil,
 	})
 }
 
@@ -137,7 +136,6 @@ func Register(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
 			"success": false,
 			"message": "Username already exist",
-			"error":   nil,
 		})
 	}
 
@@ -146,7 +144,6 @@ func Register(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
 			"success": false,
 			"message": "Email already exist",
-			"error":   nil,
 		})
 	}
 

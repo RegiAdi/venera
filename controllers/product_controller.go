@@ -114,6 +114,52 @@ func CreateProduct(c *fiber.Ctx) error {
 	})
 }
 
+func UpdateProduct(c *fiber.Ctx) error {
+	productCollection := bootstrap.MongoDB.Database.Collection("products")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	product := new(models.Product)
+
+	if err := c.BodyParser(product); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to parse body",
+			"error":   err,
+		})
+	}
+
+	objID, err := primitive.ObjectIDFromHex(c.Params("id"))
+
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "Product not found",
+			"error":   err,
+		})
+	}
+
+	update := bson.M{
+		"$set": product,
+	}
+
+	result, err := productCollection.UpdateOne(ctx, bson.M{"_id": objID}, update)
+
+	if err != nil || result.ModifiedCount < 1 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"success": false,
+			"message": "Failed to update Product",
+			"error":   err,
+		})
+	}
+
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"success": true,
+		"message": "Product updated successfully",
+	})
+}
+
 func DeleteProduct(c *fiber.Ctx) error {
 	productCollection := bootstrap.MongoDB.Database.Collection("products")
 
@@ -134,6 +180,5 @@ func DeleteProduct(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"success": true,
 		"message": "Product deleted successfully",
-		"data":    nil,
 	})
 }
