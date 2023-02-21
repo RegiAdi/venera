@@ -38,6 +38,47 @@ func GetProduct(c *fiber.Ctx) error {
 	})
 }
 
+func GetProducts(c *fiber.Ctx) error {
+	productCollection := bootstrap.MongoDB.Database.Collection("products")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	var products []models.Product
+
+	results, err := productCollection.Find(ctx, bson.M{})
+
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"success": false,
+			"message": "Products not found",
+			"error":   err,
+		})
+	}
+
+	defer results.Close(ctx)
+
+	for results.Next(ctx) {
+		var product models.Product
+
+		if err = results.Decode(&product); err != nil {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"success": false,
+				"message": "Products not found",
+				"error":   err,
+			})
+		}
+
+		products = append(products, product)
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"success": true,
+		"message": "Products retrieved successfully",
+		"data":    products,
+	})
+}
+
 func CreateProduct(c *fiber.Ctx) error {
 	productCollection := bootstrap.MongoDB.Database.Collection("products")
 
