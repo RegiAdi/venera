@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"github.com/RegiAdi/pos-mobile-backend/controllers"
-	"github.com/RegiAdi/pos-mobile-backend/middleware/shrine"
+	"github.com/RegiAdi/hatchet/controllers"
+	"github.com/RegiAdi/hatchet/middleware/shrine"
 	"github.com/gofiber/fiber/v2"
 )
 

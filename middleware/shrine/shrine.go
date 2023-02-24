@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/RegiAdi/pos-mobile-backend/bootstrap"
-	"github.com/RegiAdi/pos-mobile-backend/helpers"
-	"github.com/RegiAdi/pos-mobile-backend/models"
+	"github.com/RegiAdi/hatchet/bootstrap"
+	"github.com/RegiAdi/hatchet/helpers"
+	"github.com/RegiAdi/hatchet/models"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -19,13 +19,13 @@ func New() fiber.Handler {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"success": false,
 				"message": "Unauthorized access",
-				"error": nil,
+				"error":   nil,
 			})
 		}
 
 		userCollection := bootstrap.MongoDB.Database.Collection("users")
 
-		ctx, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
 		var user models.User
@@ -35,7 +35,7 @@ func New() fiber.Handler {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"success": false,
 				"message": "Unauthorized access",
-				"error": err,
+				"error":   err,
 			})
 		}
 
@@ -46,12 +46,12 @@ func New() fiber.Handler {
 			filter := bson.D{{"_id", user.ID}}
 			update := bson.D{
 				{"$set", bson.D{
-					{"api_token", ""}, 
+					{"api_token", ""},
 					{"token_expires_at", time.Time{}},
 					{"token_last_used_at", time.Time{}},
 					{"updated_at", currentTime},
 				},
-			}}
+				}}
 
 			_, err = userCollection.UpdateOne(context.TODO(), filter, update)
 
@@ -59,14 +59,14 @@ func New() fiber.Handler {
 				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 					"success": false,
 					"message": "Failed to delete API Token",
-					"error": err,
+					"error":   err,
 				})
 			}
 
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"success": false,
 				"message": "API Token expired",
-				"error": nil,
+				"error":   nil,
 			})
 
 		}
@@ -78,7 +78,7 @@ func New() fiber.Handler {
 				{"token_last_used_at", currentTime},
 				{"updated_at", currentTime},
 			},
-		}}
+			}}
 
 		_, err = userCollection.UpdateOne(context.TODO(), filter, update)
 
@@ -86,7 +86,7 @@ func New() fiber.Handler {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 				"success": false,
 				"message": "Failed to update API Token Last Used Time",
-				"error": err,
+				"error":   err,
 			})
 		}
 

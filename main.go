@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/RegiAdi/pos-mobile-backend/bootstrap"
-	"github.com/RegiAdi/pos-mobile-backend/config"
-	"github.com/RegiAdi/pos-mobile-backend/routes"
+	"github.com/RegiAdi/hatchet/bootstrap"
+	"github.com/RegiAdi/hatchet/config"
+	"github.com/RegiAdi/hatchet/routes"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -15,10 +15,10 @@ func main() {
 	bootstrap.Run()
 	routes.API(app)
 
-    err := app.Listen(":" + config.GetAppPort())
+	err := app.Listen(":" + config.GetAppPort())
 
-    if err != nil {
-        log.Fatal("App failed to start.")
-        panic(err)
-    }
+	if err != nil {
+		log.Fatal("App failed to start.")
+		panic(err)
+	}
 }

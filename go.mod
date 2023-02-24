@@ -1,4 +1,4 @@
-module github.com/RegiAdi/pos-mobile-backend
+module github.com/RegiAdi/hatchet
 
 go 1.19
 

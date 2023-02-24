@@ -6,26 +6,26 @@ import (
 	"log"
 	"time"
 
-	"github.com/RegiAdi/pos-mobile-backend/config"
+	"github.com/RegiAdi/hatchet/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 type MongoDBInstance struct {
-	Client *mongo.Client
+	Client   *mongo.Client
 	Database *mongo.Database
 }
 
 var MongoDB MongoDBInstance
 
 func connectDB() {
-	client, err := mongo.NewClient(options.Client().ApplyURI(config.GetMongoURI()))	
+	client, err := mongo.NewClient(options.Client().ApplyURI(config.GetMongoURI()))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	err = client.Connect(ctx)
@@ -41,7 +41,7 @@ func connectDB() {
 	fmt.Println("Database connected!")
 
 	MongoDB = MongoDBInstance{
-		Client: client,
+		Client:   client,
 		Database: client.Database(config.GetMongoDatabase()),
 	}
 }

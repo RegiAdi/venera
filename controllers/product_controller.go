@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/RegiAdi/pos-mobile-backend/bootstrap"
-	"github.com/RegiAdi/pos-mobile-backend/helpers"
-	"github.com/RegiAdi/pos-mobile-backend/models"
+	"github.com/RegiAdi/hatchet/bootstrap"
+	"github.com/RegiAdi/hatchet/helpers"
+	"github.com/RegiAdi/hatchet/models"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
