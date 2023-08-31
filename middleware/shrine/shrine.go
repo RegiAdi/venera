@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/RegiAdi/hatchet/bootstrap"
 	"github.com/RegiAdi/hatchet/helpers"
+	"github.com/RegiAdi/hatchet/kernel"
 	"github.com/RegiAdi/hatchet/models"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -23,7 +23,7 @@ func New() fiber.Handler {
 			})
 		}
 
-		userCollection := bootstrap.MongoDB.Database.Collection("users")
+		userCollection := kernel.MongoDB.Database.Collection("users")
 
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()

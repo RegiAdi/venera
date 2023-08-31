@@ -4,14 +4,14 @@ import (
 	"context"
 	"time"
 
-	"github.com/RegiAdi/hatchet/bootstrap"
+	"github.com/RegiAdi/hatchet/kernel"
 	"github.com/RegiAdi/hatchet/responses"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 func GetUserInfo(c *fiber.Ctx) error {
-	userCollection := bootstrap.MongoDB.Database.Collection("users")
+	userCollection := kernel.MongoDB.Database.Collection("users")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

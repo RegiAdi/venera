@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/RegiAdi/hatchet/bootstrap"
 	"github.com/RegiAdi/hatchet/helpers"
+	"github.com/RegiAdi/hatchet/kernel"
 	"github.com/RegiAdi/hatchet/models"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,7 +13,7 @@ import (
 )
 
 func GetProduct(c *fiber.Ctx) error {
-	productCollection := bootstrap.MongoDB.Database.Collection("products")
+	productCollection := kernel.MongoDB.Database.Collection("products")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -39,7 +39,7 @@ func GetProduct(c *fiber.Ctx) error {
 }
 
 func GetProducts(c *fiber.Ctx) error {
-	productCollection := bootstrap.MongoDB.Database.Collection("products")
+	productCollection := kernel.MongoDB.Database.Collection("products")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -80,7 +80,7 @@ func GetProducts(c *fiber.Ctx) error {
 }
 
 func CreateProduct(c *fiber.Ctx) error {
-	productCollection := bootstrap.MongoDB.Database.Collection("products")
+	productCollection := kernel.MongoDB.Database.Collection("products")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -115,7 +115,7 @@ func CreateProduct(c *fiber.Ctx) error {
 }
 
 func UpdateProduct(c *fiber.Ctx) error {
-	productCollection := bootstrap.MongoDB.Database.Collection("products")
+	productCollection := kernel.MongoDB.Database.Collection("products")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -161,7 +161,7 @@ func UpdateProduct(c *fiber.Ctx) error {
 }
 
 func DeleteProduct(c *fiber.Ctx) error {
-	productCollection := bootstrap.MongoDB.Database.Collection("products")
+	productCollection := kernel.MongoDB.Database.Collection("products")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()

@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/RegiAdi/hatchet/bootstrap"
 	"github.com/RegiAdi/hatchet/helpers"
+	"github.com/RegiAdi/hatchet/kernel"
 	"github.com/RegiAdi/hatchet/models"
 	"github.com/RegiAdi/hatchet/responses"
 	"github.com/gofiber/fiber/v2"
@@ -16,7 +16,7 @@ import (
 )
 
 func Login(c *fiber.Ctx) error {
-	userCollection := bootstrap.MongoDB.Database.Collection("users")
+	userCollection := kernel.MongoDB.Database.Collection("users")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -83,7 +83,7 @@ func Login(c *fiber.Ctx) error {
 }
 
 func Logout(c *fiber.Ctx) error {
-	userCollection := bootstrap.MongoDB.Database.Collection("users")
+	userCollection := kernel.MongoDB.Database.Collection("users")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -116,7 +116,7 @@ func Logout(c *fiber.Ctx) error {
 }
 
 func Register(c *fiber.Ctx) error {
-	userCollection := bootstrap.MongoDB.Database.Collection("users")
+	userCollection := kernel.MongoDB.Database.Collection("users")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
