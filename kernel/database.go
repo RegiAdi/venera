@@ -2,7 +2,6 @@ package kernel
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -12,14 +11,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-type MongoDBInstance struct {
-	Client   *mongo.Client
-	Database *mongo.Database
+type MongoConnection struct {
+	Client *mongo.Client
+	Db     *mongo.Database
 }
 
-var MongoDB MongoDBInstance
+var Mongo MongoConnection
 
-func connectDB() {
+func NewMongoConnection() {
 	client, err := mongo.NewClient(options.Client().ApplyURI(config.GetMongoURI()))
 	if err != nil {
 		log.Fatal(err)
@@ -38,10 +37,10 @@ func connectDB() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Database connected!")
+	db := client.Database(config.GetMongoDatabase())
 
-	MongoDB = MongoDBInstance{
-		Client:   client,
-		Database: client.Database(config.GetMongoDatabase()),
+	Mongo = MongoConnection{
+		Client: client,
+		Db:     db,
 	}
 }

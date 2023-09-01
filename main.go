@@ -12,6 +12,7 @@ import (
 func main() {
 	app := fiber.New()
 
+	// kernel.NewMongo()
 	kernel.Run()
 	routes.API(app)
 

@@ -16,10 +16,10 @@ import (
 )
 
 func Login(c *fiber.Ctx) error {
-	userCollection := kernel.MongoDB.Database.Collection("users")
-
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
+
+	userCollection := kernel.Mongo.Db.Collection("users")
 
 	var request models.User
 	var user models.User
@@ -83,10 +83,10 @@ func Login(c *fiber.Ctx) error {
 }
 
 func Logout(c *fiber.Ctx) error {
-	userCollection := kernel.MongoDB.Database.Collection("users")
-
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
+
+	userCollection := kernel.Mongo.Db.Collection("users")
 
 	reqHeader := c.GetReqHeaders()
 
@@ -116,10 +116,10 @@ func Logout(c *fiber.Ctx) error {
 }
 
 func Register(c *fiber.Ctx) error {
-	userCollection := kernel.MongoDB.Database.Collection("users")
-
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
+
+	userCollection := kernel.Mongo.Db.Collection("users")
 
 	user := new(models.User)
 
