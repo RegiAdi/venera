@@ -23,7 +23,7 @@ func New() fiber.Handler {
 			})
 		}
 
-		userCollection := kernel.MongoDB.Database.Collection("users")
+		userCollection := kernel.Mongo.Db.Collection("users")
 
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
