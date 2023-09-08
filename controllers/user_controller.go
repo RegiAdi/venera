@@ -1,35 +1,37 @@
 package controllers
 
 import (
-	"context"
-	"time"
-
-	"github.com/RegiAdi/hatchet/kernel"
+	"github.com/RegiAdi/hatchet/repositories"
 	"github.com/RegiAdi/hatchet/responses"
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
-func GetUserInfo(c *fiber.Ctx) error {
-	userCollection := kernel.Mongo.Db.Collection("users")
+type UserController struct {
+	userRepository repositories.UserRepository
+}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+func NewUserController(userRepository repositories.UserRepository) *UserController {
+	return &UserController{
+		userRepository,
+	}
+}
 
+func (userController *UserController) GetUserInfo(c *fiber.Ctx) error {
 	var userResponse responses.UserResponse
 	reqHeader := c.GetReqHeaders()
 
-	err := userCollection.FindOne(ctx, bson.D{{"api_token", reqHeader["Authorization"]}}).Decode(&userResponse)
+	userResponse, err := userController.userRepository.GetUserByApiToken(reqHeader["Authorization"]) 
+
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
+			"status": "Failed",
 			"message": "User not found",
-			"error":   err,
+			"data":   nil,
 		})
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
+		"status": "Success",
 		"message": "User retrieved successfully",
 		"data":    userResponse,
 	})

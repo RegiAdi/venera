@@ -2,11 +2,13 @@ package routes
 
 import (
 	"github.com/RegiAdi/hatchet/controllers"
+	"github.com/RegiAdi/hatchet/kernel"
 	"github.com/RegiAdi/hatchet/middleware/shrine"
+	"github.com/RegiAdi/hatchet/repositories"
 	"github.com/gofiber/fiber/v2"
 )
 
-func API(app *fiber.App) {
+func Api(app *fiber.App) {
 	api := app.Group("/api")
 
 	api.Group("/auth")
@@ -22,7 +24,13 @@ func API(app *fiber.App) {
 	})
 
 	auth.Get("/logout", controllers.Logout)
-	api.Get("/userinfo", controllers.GetUserInfo)
+
+	db := kernel.Mongo.Db
+	userRepository := repositories.NewUserRepository(db)
+
+	userController := controllers.NewUserController(userRepository)
+	
+	api.Get("/userinfo", userController.GetUserInfo)
 
 	api.Get("/products", controllers.GetProducts)
 	api.Get("/products/:id", controllers.GetProduct)
