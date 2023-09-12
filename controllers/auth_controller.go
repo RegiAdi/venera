@@ -54,7 +54,7 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	APIToken, _ := helpers.GenerateAPIToken()
-	apiTokenExpirationDate := helpers.GenerateAPITokenExpiration()
+	APITokenExpirationDate := helpers.GenerateAPITokenExpiration()
 
 	userID, _ := primitive.ObjectIDFromHex(user.ID)
 	filter := bson.D{{Key: "_id", Value: userID}}
@@ -62,7 +62,7 @@ func Login(c *fiber.Ctx) error {
 		{Key: "$set", Value: bson.D{
 			{Key: "api_token", Value: APIToken},
 			{Key: "device_name", Value: request.DeviceName},
-			{Key: "token_expires_at", Value: apiTokenExpirationDate},
+			{Key: "token_expires_at", Value: APITokenExpirationDate},
 			{Key: "updated_at", Value: helpers.GetCurrentTime()},
 		},
 		}}
