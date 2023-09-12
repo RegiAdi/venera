@@ -23,7 +23,7 @@ func New() fiber.Handler {
 			})
 		}
 
-		userCollection := kernel.Mongo.Db.Collection("users")
+		userCollection := kernel.Mongo.DB.Collection("users")
 
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
@@ -43,7 +43,7 @@ func New() fiber.Handler {
 
 		// check api token expiration time
 		if helpers.GetCurrentTime().After(user.TokenExpiresAt) {
-			filter := bson.D{{Key: "_id", Value: user.Id}}
+			filter := bson.D{{Key: "_id", Value: user.ID}}
 			update := bson.D{
 				{Key: "$set", Value: bson.D{
 					{Key: "api_token", Value: ""},
@@ -72,7 +72,7 @@ func New() fiber.Handler {
 		}
 
 		// save token last used time
-		filter := bson.D{{Key: "id", Value: user.Id}}
+		filter := bson.D{{Key: "_id", Value: user.ID}}
 		update := bson.D{
 			{Key: "$set", Value: bson.D{
 				{Key: "token_last_used_at", Value: currentTime},

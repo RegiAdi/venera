@@ -25,11 +25,11 @@ func Api(app *fiber.App) {
 
 	auth.Get("/logout", controllers.Logout)
 
-	db := kernel.Mongo.Db
-	userRepository := repositories.NewUserRepository(db)
+	DB := kernel.Mongo.DB
+	userRepository := repositories.NewUserRepository(DB)
 
 	userController := controllers.NewUserController(userRepository)
-	
+
 	api.Get("/userinfo", userController.GetUserInfo)
 
 	api.Get("/products", controllers.GetProducts)

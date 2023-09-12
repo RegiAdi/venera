@@ -1,6 +1,6 @@
 package kernel
 
 func Run() {
-	loadENV()
+	loadEnv()
 	NewMongoConnection()
 }

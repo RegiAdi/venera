@@ -16,7 +16,7 @@ func GetProduct(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	productCollection := kernel.Mongo.Db.Collection("products")
+	productCollection := kernel.Mongo.DB.Collection("products")
 
 	var product models.Product
 
@@ -42,7 +42,7 @@ func GetProducts(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	productCollection := kernel.Mongo.Db.Collection("products")
+	productCollection := kernel.Mongo.DB.Collection("products")
 
 	var products []models.Product
 
@@ -83,7 +83,7 @@ func CreateProduct(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	productCollection := kernel.Mongo.Db.Collection("products")
+	productCollection := kernel.Mongo.DB.Collection("products")
 
 	product := new(models.Product)
 
@@ -118,7 +118,7 @@ func UpdateProduct(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	productCollection := kernel.Mongo.Db.Collection("products")
+	productCollection := kernel.Mongo.DB.Collection("products")
 
 	product := new(models.Product)
 
@@ -164,7 +164,7 @@ func DeleteProduct(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	productCollection := kernel.Mongo.Db.Collection("products")
+	productCollection := kernel.Mongo.DB.Collection("products")
 
 	objID, _ := primitive.ObjectIDFromHex(c.Params("id"))
 	result, err := productCollection.DeleteOne(ctx, bson.M{"_id": objID})

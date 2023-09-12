@@ -6,7 +6,7 @@ import (
 )
 
 type UserRepository interface {
-	GetUserByApiToken(apiToken string) (responses.UserResponse, error)
+	GetUserByAPIToken(APIToken string) (responses.UserResponse, error)
 }
 
 type UserController struct {
@@ -23,7 +23,7 @@ func (userController *UserController) GetUserInfo(c *fiber.Ctx) error {
 	var userResponse responses.UserResponse
 	reqHeader := c.GetReqHeaders()
 
-	userResponse, err := userController.userRepository.GetUserByApiToken(reqHeader["Authorization"])
+	userResponse, err := userController.userRepository.GetUserByAPIToken(reqHeader["Authorization"])
 
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{

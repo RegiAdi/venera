@@ -13,7 +13,7 @@ import (
 
 type MongoConnection struct {
 	Client *mongo.Client
-	Db     *mongo.Database
+	DB     *mongo.Database
 }
 
 var Mongo MongoConnection
@@ -41,6 +41,6 @@ func NewMongoConnection() {
 
 	Mongo = MongoConnection{
 		Client: client,
-		Db:     db,
+		DB:     db,
 	}
 }

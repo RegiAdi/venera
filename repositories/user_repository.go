@@ -10,24 +10,24 @@ import (
 )
 
 type UserRepository struct {
-	db *mongo.Database
+	DB *mongo.Database
 }
 
-func NewUserRepository(db *mongo.Database) *UserRepository {
+func NewUserRepository(DB *mongo.Database) *UserRepository {
 	return &UserRepository{
-		db,
+		DB,
 	}
 }
 
-func (userRepo *UserRepository) GetUserByApiToken(apiToken string) (responses.UserResponse, error) {
-	userCollection := userRepo.db.Collection("users")
+func (userRepository *UserRepository) GetUserByAPIToken(APIToken string) (responses.UserResponse, error) {
+	userCollection := userRepository.DB.Collection("users")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	var userResponse responses.UserResponse
 
-	err := userCollection.FindOne(ctx, bson.D{{Key: "api_token", Value: apiToken}}).Decode(&userResponse)
+	err := userCollection.FindOne(ctx, bson.D{{Key: "api_token", Value: APIToken}}).Decode(&userResponse)
 
 	return userResponse, err
 }

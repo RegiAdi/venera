@@ -19,7 +19,7 @@ func Login(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	userCollection := kernel.Mongo.Db.Collection("users")
+	userCollection := kernel.Mongo.DB.Collection("users")
 
 	var request models.User
 	var user models.User
@@ -53,14 +53,14 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
-	apiToken, _ := helpers.GenerateAPIToken()
+	APIToken, _ := helpers.GenerateAPIToken()
 	apiTokenExpirationDate := helpers.GenerateAPITokenExpiration()
 
-	userId, err := primitive.ObjectIDFromHex(user.Id)
-	filter := bson.D{{Key: "_id", Value: userId}}
+	userID, err := primitive.ObjectIDFromHex(user.ID)
+	filter := bson.D{{Key: "_id", Value: userID}}
 	update := bson.D{
 		{Key: "$set", Value: bson.D{
-			{Key: "api_token", Value: apiToken},
+			{Key: "api_token", Value: APIToken},
 			{Key: "device_name", Value: request.DeviceName},
 			{Key: "token_expires_at", Value: apiTokenExpirationDate},
 			{Key: "updated_at", Value: helpers.GetCurrentTime()},
@@ -88,7 +88,7 @@ func Logout(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	userCollection := kernel.Mongo.Db.Collection("users")
+	userCollection := kernel.Mongo.DB.Collection("users")
 
 	reqHeader := c.GetReqHeaders()
 
@@ -121,7 +121,7 @@ func Register(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	userCollection := kernel.Mongo.Db.Collection("users")
+	userCollection := kernel.Mongo.DB.Collection("users")
 
 	user := new(models.User)
 

@@ -4,7 +4,7 @@ import (
 	"os"
 )
 
-func GetAppENV() string {
+func GetAppEnv() string {
 	return os.Getenv("APP_ENV")
 }
 
