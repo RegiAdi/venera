@@ -56,7 +56,7 @@ func Login(c *fiber.Ctx) error {
 	APIToken, _ := helpers.GenerateAPIToken()
 	apiTokenExpirationDate := helpers.GenerateAPITokenExpiration()
 
-	userID, err := primitive.ObjectIDFromHex(user.ID)
+	userID, _ := primitive.ObjectIDFromHex(user.ID)
 	filter := bson.D{{Key: "_id", Value: userID}}
 	update := bson.D{
 		{Key: "$set", Value: bson.D{

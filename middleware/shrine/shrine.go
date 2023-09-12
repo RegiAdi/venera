@@ -9,6 +9,7 @@ import (
 	"github.com/RegiAdi/hatchet/models"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func New() fiber.Handler {
@@ -40,10 +41,11 @@ func New() fiber.Handler {
 		}
 
 		currentTime := helpers.GetCurrentTime()
+		userID, _ := primitive.ObjectIDFromHex(user.ID)
 
 		// check api token expiration time
 		if helpers.GetCurrentTime().After(user.TokenExpiresAt) {
-			filter := bson.D{{Key: "_id", Value: user.ID}}
+			filter := bson.D{{Key: "_id", Value: userID}}
 			update := bson.D{
 				{Key: "$set", Value: bson.D{
 					{Key: "api_token", Value: ""},
@@ -72,7 +74,7 @@ func New() fiber.Handler {
 		}
 
 		// save token last used time
-		filter := bson.D{{Key: "_id", Value: user.ID}}
+		filter := bson.D{{Key: "_id", Value: userID}}
 		update := bson.D{
 			{Key: "$set", Value: bson.D{
 				{Key: "token_last_used_at", Value: currentTime},
