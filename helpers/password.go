@@ -1,11 +1,12 @@
 package helpers
 
 import (
+	"github.com/RegiAdi/hatchet/config"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func HashPassword(password string) (string, error) {
-    bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+    bytes, err := bcrypt.GenerateFromPassword([]byte(password), config.GetPasswordHashCost())
     return string(bytes), err
 }
 
