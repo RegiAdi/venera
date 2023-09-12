@@ -13,7 +13,7 @@ func main() {
 	app := fiber.New()
 
 	kernel.Run()
-	routes.Api(app)
+	routes.API(app)
 
 	err := app.Listen(":" + config.GetAppPort())
 

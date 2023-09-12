@@ -8,18 +8,18 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Api(app *fiber.App) {
-	api := app.Group("/api")
+func API(app *fiber.App) {
+	API := app.Group("/api")
 
-	api.Group("/auth")
-	auth := api.Group("/auth")
+	API.Group("/auth")
+	auth := API.Group("/auth")
 
 	auth.Post("/login", controllers.Login)
 	auth.Post("/register", controllers.Register)
 
 	app.Use(shrine.New())
 
-	api.Get("/", func(c *fiber.Ctx) error {
+	API.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World 👋!")
 	})
 
@@ -30,11 +30,11 @@ func Api(app *fiber.App) {
 
 	userController := controllers.NewUserController(userRepository)
 
-	api.Get("/userinfo", userController.GetUserInfo)
+	API.Get("/userinfo", userController.GetUserInfo)
 
-	api.Get("/products", controllers.GetProducts)
-	api.Get("/products/:id", controllers.GetProduct)
-	api.Post("/products", controllers.CreateProduct)
-	api.Put("/products/:id", controllers.UpdateProduct)
-	api.Delete("/products/:id", controllers.DeleteProduct)
+	API.Get("/products", controllers.GetProducts)
+	API.Get("/products/:id", controllers.GetProduct)
+	API.Post("/products", controllers.CreateProduct)
+	API.Put("/products/:id", controllers.UpdateProduct)
+	API.Delete("/products/:id", controllers.DeleteProduct)
 }

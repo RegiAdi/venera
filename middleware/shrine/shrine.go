@@ -43,7 +43,7 @@ func New() fiber.Handler {
 		currentTime := helpers.GetCurrentTime()
 		userID, _ := primitive.ObjectIDFromHex(user.ID)
 
-		// check api token expiration time
+		// check API token expiration time
 		if helpers.GetCurrentTime().After(user.TokenExpiresAt) {
 			filter := bson.D{{Key: "_id", Value: userID}}
 			update := bson.D{
