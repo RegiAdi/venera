@@ -31,7 +31,7 @@ func (userRepo *userRepository) GetUserByApiToken(apiToken string) (responses.Us
 
 	var userResponse responses.UserResponse
 
-	err := userCollection.FindOne(ctx, bson.D{{"api_token", apiToken}}).Decode(&userResponse)
+	err := userCollection.FindOne(ctx, bson.D{{Key: "api_token", Value: apiToken}}).Decode(&userResponse)
 
-	return userResponse, err 
+	return userResponse, err
 }

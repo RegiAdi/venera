@@ -35,7 +35,7 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
-	err := userCollection.FindOne(ctx, bson.D{{"username", request.Username}}).Decode(&user)
+	err := userCollection.FindOne(ctx, bson.D{{Key: "username", Value: request.Username}}).Decode(&user)
 
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -55,13 +55,13 @@ func Login(c *fiber.Ctx) error {
 
 	apiToken, _ := helpers.GenerateAPIToken()
 	apiTokenExpirationDate := helpers.GenerateAPITokenExpiration()
-	filter := bson.D{{"_id", user.ID}}
+	filter := bson.D{{Key: "_id", Value: user.Id}}
 	update := bson.D{
-		{"$set", bson.D{
-			{"api_token", apiToken},
-			{"device_name", request.DeviceName},
-			{"token_expires_at", apiTokenExpirationDate},
-			{"updated_at", helpers.GetCurrentTime()},
+		{Key: "$set", Value: bson.D{
+			{Key: "api_token", Value: apiToken},
+			{Key: "device_name", Value: request.DeviceName},
+			{Key: "token_expires_at", Value: apiTokenExpirationDate},
+			{Key: "updated_at", Value: helpers.GetCurrentTime()},
 		},
 		}}
 
@@ -90,12 +90,12 @@ func Logout(c *fiber.Ctx) error {
 
 	reqHeader := c.GetReqHeaders()
 
-	filter := bson.D{{"api_token", reqHeader["Authorization"]}}
+	filter := bson.D{{Key: "api_token", Value: reqHeader["Authorization"]}}
 	update := bson.D{
-		{"$set", bson.D{
-			{"api_token", nil},
-			{"token_expires_at", time.Time{}},
-			{"updated_at", helpers.GetCurrentTime()},
+		{Key: "$set", Value: bson.D{
+			{Key: "api_token", Value: nil},
+			{Key: "token_expires_at", Value: time.Time{}},
+			{Key: "updated_at", Value: helpers.GetCurrentTime()},
 		},
 		}}
 
@@ -131,7 +131,7 @@ func Register(c *fiber.Ctx) error {
 		})
 	}
 
-	usernameCount, _ := userCollection.CountDocuments(ctx, bson.D{{"username", user.Username}})
+	usernameCount, _ := userCollection.CountDocuments(ctx, bson.D{{Key: "username", Value: user.Username}})
 	if usernameCount > 0 {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
 			"success": false,
@@ -139,7 +139,7 @@ func Register(c *fiber.Ctx) error {
 		})
 	}
 
-	emailCount, _ := userCollection.CountDocuments(ctx, bson.D{{"email", user.Email}})
+	emailCount, _ := userCollection.CountDocuments(ctx, bson.D{{Key: "email", Value: user.Email}})
 	if emailCount > 0 {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
 			"success": false,

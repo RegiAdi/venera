@@ -30,7 +30,7 @@ func New() fiber.Handler {
 
 		var user models.User
 
-		err := userCollection.FindOne(ctx, bson.D{{"api_token", reqHeader["Authorization"]}}).Decode(&user)
+		err := userCollection.FindOne(ctx, bson.D{{Key: "api_token", Value: reqHeader["Authorization"]}}).Decode(&user)
 		if err != nil {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"success": false,
@@ -43,13 +43,13 @@ func New() fiber.Handler {
 
 		// check api token expiration time
 		if helpers.GetCurrentTime().After(user.TokenExpiresAt.Time()) {
-			filter := bson.D{{"_id", user.ID}}
+			filter := bson.D{{Key: "_id", Value: user.Id}}
 			update := bson.D{
-				{"$set", bson.D{
-					{"api_token", ""},
-					{"token_expires_at", time.Time{}},
-					{"token_last_used_at", time.Time{}},
-					{"updated_at", currentTime},
+				{Key: "$set", Value: bson.D{
+					{Key: "api_token", Value: ""},
+					{Key: "token_expires_at", Value: time.Time{}},
+					{Key: "token_last_used_at", Value: time.Time{}},
+					{Key: "updated_at", Value: currentTime},
 				},
 				}}
 
@@ -72,11 +72,11 @@ func New() fiber.Handler {
 		}
 
 		// save token last used time
-		filter := bson.D{{"_id", user.ID}}
+		filter := bson.D{{Key: "id", Value: user.Id}}
 		update := bson.D{
-			{"$set", bson.D{
-				{"token_last_used_at", currentTime},
-				{"updated_at", currentTime},
+			{Key: "$set", Value: bson.D{
+				{Key: "token_last_used_at", Value: currentTime},
+				{Key: "updated_at", Value: currentTime},
 			},
 			}}
 
