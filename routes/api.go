@@ -8,8 +8,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func API(app *fiber.App) {
-	API := app.Group("/api")
+func API(appKernel *kernel.AppKernel) {
+	API := appKernel.Server.Group("/api")
 
 	API.Group("/auth")
 	auth := API.Group("/auth")
@@ -17,7 +17,7 @@ func API(app *fiber.App) {
 	auth.Post("/login", controllers.Login)
 	auth.Post("/register", controllers.Register)
 
-	app.Use(shrine.New())
+	appKernel.Server.Use(shrine.New())
 
 	API.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World 👋!")
@@ -25,7 +25,7 @@ func API(app *fiber.App) {
 
 	auth.Get("/logout", controllers.Logout)
 
-	DB := kernel.Mongo.DB
+	DB := appKernel.DB
 	userRepository := repositories.NewUserRepository(DB)
 
 	userController := controllers.NewUserController(userRepository)
