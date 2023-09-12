@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/RegiAdi/hatchet/controllers"
+	"github.com/RegiAdi/hatchet/handlers"
 	"github.com/RegiAdi/hatchet/kernel"
 	"github.com/RegiAdi/hatchet/middleware/shrine"
 	"github.com/RegiAdi/hatchet/repositories"
@@ -31,6 +32,9 @@ func API(appKernel *kernel.AppKernel) {
 	userController := controllers.NewUserController(userRepository)
 
 	API.Get("/userinfo", userController.GetUserInfo)
+
+	userHandler := handlers.NewUserHandler(appKernel)
+	API.Get("/me", userHandler.GetUserInfoHandler)
 
 	API.Get("/products", controllers.GetProducts)
 	API.Get("/products/:id", controllers.GetProduct)
