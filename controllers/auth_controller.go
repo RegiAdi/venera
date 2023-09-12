@@ -55,7 +55,9 @@ func Login(c *fiber.Ctx) error {
 
 	apiToken, _ := helpers.GenerateAPIToken()
 	apiTokenExpirationDate := helpers.GenerateAPITokenExpiration()
-	filter := bson.D{{Key: "_id", Value: user.Id}}
+
+	userId, err := primitive.ObjectIDFromHex(user.Id)
+	filter := bson.D{{Key: "_id", Value: userId}}
 	update := bson.D{
 		{Key: "$set", Value: bson.D{
 			{Key: "api_token", Value: apiToken},
@@ -157,8 +159,8 @@ func Register(c *fiber.Ctx) error {
 	}
 
 	user.Password = password
-	user.CreatedAt = primitive.NewDateTimeFromTime(helpers.GetCurrentTime())
-	user.UpdatedAt = primitive.NewDateTimeFromTime(helpers.GetCurrentTime())
+	user.CreatedAt = helpers.GetCurrentTime()
+	user.UpdatedAt = helpers.GetCurrentTime()
 
 	result, err := userCollection.InsertOne(ctx, user)
 	if err != nil {

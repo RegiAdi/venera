@@ -42,7 +42,7 @@ func New() fiber.Handler {
 		currentTime := helpers.GetCurrentTime()
 
 		// check api token expiration time
-		if helpers.GetCurrentTime().After(user.TokenExpiresAt.Time()) {
+		if helpers.GetCurrentTime().After(user.TokenExpiresAt) {
 			filter := bson.D{{Key: "_id", Value: user.Id}}
 			update := bson.D{
 				{Key: "$set", Value: bson.D{
