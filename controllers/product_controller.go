@@ -95,8 +95,8 @@ func CreateProduct(c *fiber.Ctx) error {
 		})
 	}
 
-	product.CreatedAt = primitive.NewDateTimeFromTime(helpers.GetCurrentTime())
-	product.UpdatedAt = primitive.NewDateTimeFromTime(helpers.GetCurrentTime())
+	product.CreatedAt = helpers.GetCurrentTime()
+	product.UpdatedAt = helpers.GetCurrentTime()
 
 	result, err := productCollection.InsertOne(ctx, product)
 	if err != nil {
