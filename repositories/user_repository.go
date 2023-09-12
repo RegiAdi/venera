@@ -9,21 +9,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type UserRepository interface {
-	GetUserByApiToken(apiToken string) (responses.UserResponse, error)
-}
-
-type userRepository struct {
+type UserRepository struct {
 	db *mongo.Database
 }
 
-func NewUserRepository(db *mongo.Database) *userRepository {
-	return &userRepository{
+func NewUserRepository(db *mongo.Database) *UserRepository {
+	return &UserRepository{
 		db,
 	}
 }
 
-func (userRepo *userRepository) GetUserByApiToken(apiToken string) (responses.UserResponse, error) {
+func (userRepo *UserRepository) GetUserByApiToken(apiToken string) (responses.UserResponse, error) {
 	userCollection := userRepo.db.Collection("users")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
