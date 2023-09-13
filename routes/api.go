@@ -32,7 +32,7 @@ func API(appKernel *kernel.AppKernel) {
 	API.Get("/userinfo", userController.GetUserInfo)
 
 	userService := services.NewUserService(userRepository)
-	userHandler := handlers.NewUserHandler(appKernel, userRepository, userService)
+	userHandler := handlers.NewUserHandler(appKernel, userService)
 	API.Get("/me", userHandler.GetUserInfoHandler)
 
 	API.Get("/products", controllers.GetProducts)
