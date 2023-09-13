@@ -2,19 +2,33 @@ package handlers
 
 import (
 	"github.com/RegiAdi/hatchet/kernel"
-	"github.com/RegiAdi/hatchet/repositories"
 	"github.com/RegiAdi/hatchet/responses"
-	"github.com/RegiAdi/hatchet/services"
 	"github.com/gofiber/fiber/v2"
 )
 
-type UserHandler struct {
-	appKernel *kernel.AppKernel
+type UserRepository interface {
+	GetUserByAPIToken(APIToken string) (responses.UserResponse, error)
 }
 
-func NewUserHandler(appKernel *kernel.AppKernel) *UserHandler {
+type UserService interface {
+	GetUserDetail(APIToken string) (responses.UserResponse, error)
+}
+
+type UserHandler struct {
+	appKernel      *kernel.AppKernel
+	userRepository UserRepository
+	userService    UserService
+}
+
+func NewUserHandler(
+	appKernel *kernel.AppKernel,
+	userRepository UserRepository,
+	userService UserService,
+) *UserHandler {
 	return &UserHandler{
 		appKernel,
+		userRepository,
+		userService,
 	}
 }
 
@@ -23,10 +37,7 @@ func (userHandler *UserHandler) GetUserInfoHandler(c *fiber.Ctx) error {
 	reqHeader := c.GetReqHeaders()
 	APIToken := reqHeader["Authorization"]
 
-	userRepository := repositories.NewUserRepository(userHandler.appKernel.DB)
-	userService := services.NewUserService(userRepository)
-
-	userResponse, err := userService.GetUserDetail(APIToken)
+	userResponse, err := userHandler.userService.GetUserDetail(APIToken)
 
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{

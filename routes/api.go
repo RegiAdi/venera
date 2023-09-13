@@ -6,6 +6,7 @@ import (
 	"github.com/RegiAdi/hatchet/kernel"
 	"github.com/RegiAdi/hatchet/middleware/shrine"
 	"github.com/RegiAdi/hatchet/repositories"
+	"github.com/RegiAdi/hatchet/services"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -26,14 +27,12 @@ func API(appKernel *kernel.AppKernel) {
 
 	auth.Get("/logout", controllers.Logout)
 
-	DB := appKernel.DB
-	userRepository := repositories.NewUserRepository(DB)
-
+	userRepository := repositories.NewUserRepository(appKernel.DB)
 	userController := controllers.NewUserController(userRepository)
-
 	API.Get("/userinfo", userController.GetUserInfo)
 
-	userHandler := handlers.NewUserHandler(appKernel)
+	userService := services.NewUserService(userRepository)
+	userHandler := handlers.NewUserHandler(appKernel, userRepository, userService)
 	API.Get("/me", userHandler.GetUserInfoHandler)
 
 	API.Get("/products", controllers.GetProducts)
