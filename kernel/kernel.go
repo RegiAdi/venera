@@ -19,3 +19,10 @@ func NewAppKernel() *AppKernel {
 		Server: fiber.New(),
 	}
 }
+
+const (
+	StatusFailed       = "FAILED"
+	StatusSuccess      = "SUCCESS"
+	StatusUnauthorized = fiber.StatusUnauthorized
+	StatusBadRequest   = fiber.StatusBadRequest
+)

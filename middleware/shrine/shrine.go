@@ -1,94 +1,101 @@
 package shrine
 
 import (
-	"context"
-	"time"
-
 	"github.com/RegiAdi/hatchet/helpers"
 	"github.com/RegiAdi/hatchet/kernel"
 	"github.com/RegiAdi/hatchet/models"
+	"github.com/RegiAdi/hatchet/responses"
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func New() fiber.Handler {
+type UserRepository interface {
+	GetAuthenticatedUser(APIToken string) (models.User, error)
+	UpdateAPITokenExpirationTime(userID string) error
+	UpdateAPITokenLastUsedTime(userID string) error
+}
+
+type Shrine struct {
+	userRepository UserRepository
+}
+
+func New(userRepository UserRepository) *Shrine {
+	return &Shrine{
+		userRepository,
+	}
+}
+
+func (shrine *Shrine) getAuthenticatedUser(APIToken string) (models.User, error) {
+	return shrine.userRepository.GetAuthenticatedUser(APIToken)
+}
+
+func (shrine *Shrine) isAPITokenExpired(user models.User) bool {
+	if helpers.GetCurrentTime().After(user.TokenExpiresAt) {
+		return true
+	}
+
+	return false
+}
+
+func (shrine *Shrine) setAPITokenToExpired(user models.User) error {
+	return shrine.userRepository.UpdateAPITokenExpirationTime(user.ID)
+}
+
+func (shrine *Shrine) setAPITokenLastUsedTime(user models.User) error {
+	return shrine.userRepository.UpdateAPITokenLastUsedTime(user.ID)
+}
+
+func (shrine *Shrine) Handler() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		reqHeader := c.GetReqHeaders()
+		APIToken := reqHeader["Authorization"]
 
-		if reqHeader["Authorization"] == "" {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"success": false,
-				"message": "Unauthorized access",
-				"error":   nil,
+		if APIToken == "" {
+			return responses.SendResponse(c, responses.BaseResponse{
+				StatusCode: kernel.StatusUnauthorized,
+				Status:     "failed",
+				Message:    "Unauthorized access",
+				Data:       nil,
 			})
 		}
 
-		userCollection := kernel.Mongo.DB.Collection("users")
-
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-
-		var user models.User
-
-		err := userCollection.FindOne(ctx, bson.D{{Key: "api_token", Value: reqHeader["Authorization"]}}).Decode(&user)
+		user, err := shrine.getAuthenticatedUser(APIToken)
 		if err != nil {
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"success": false,
-				"message": "Unauthorized access",
-				"error":   err,
+			return responses.SendResponse(c, responses.BaseResponse{
+				StatusCode: kernel.StatusUnauthorized,
+				Status:     kernel.StatusFailed,
+				Message:    "Unauthorized access",
+				Data:       nil,
 			})
 		}
 
-		currentTime := helpers.GetCurrentTime()
-		userID, _ := primitive.ObjectIDFromHex(user.ID)
-
-		// check API token expiration time
-		if helpers.GetCurrentTime().After(user.TokenExpiresAt) {
-			filter := bson.D{{Key: "_id", Value: userID}}
-			update := bson.D{
-				{Key: "$set", Value: bson.D{
-					{Key: "api_token", Value: ""},
-					{Key: "token_expires_at", Value: time.Time{}},
-					{Key: "token_last_used_at", Value: time.Time{}},
-					{Key: "updated_at", Value: currentTime},
-				},
-				}}
-
-			_, err = userCollection.UpdateOne(context.TODO(), filter, update)
-
+		if shrine.isAPITokenExpired(user) {
+			err := shrine.setAPITokenToExpired(user)
 			if err != nil {
-				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-					"success": false,
-					"message": "Failed to delete API Token",
-					"error":   err,
+				return responses.SendResponse(c, responses.BaseResponse{
+					StatusCode: kernel.StatusBadRequest,
+					Status:     kernel.StatusFailed,
+					Message:    "Can't delete API Token",
+					Data:       nil,
 				})
 			}
 
-			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-				"success": false,
-				"message": "API Token expired",
-				"error":   nil,
+			return responses.SendResponse(c, responses.BaseResponse{
+				StatusCode: kernel.StatusUnauthorized,
+				Status:     kernel.StatusFailed,
+				Message:    "API Token expired",
+				Data:       nil,
 			})
 
 		}
 
-		// save token last used time
-		filter := bson.D{{Key: "_id", Value: userID}}
-		update := bson.D{
-			{Key: "$set", Value: bson.D{
-				{Key: "token_last_used_at", Value: currentTime},
-				{Key: "updated_at", Value: currentTime},
-			},
-			}}
-
-		_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+		err = shrine.setAPITokenLastUsedTime(user)
 
 		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"success": false,
-				"message": "Failed to update API Token Last Used Time",
-				"error":   err,
+			return responses.SendResponse(c, responses.BaseResponse{
+				StatusCode: kernel.StatusBadRequest,
+				Status:     kernel.StatusFailed,
+				Message:    "Failed to update API Token Last Used Time",
+				Data:       nil,
 			})
 		}
 

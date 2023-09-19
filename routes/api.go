@@ -11,6 +11,18 @@ import (
 )
 
 func API(appKernel *kernel.AppKernel) {
+	// repositories
+	userRepository := repositories.NewUserRepository(appKernel.DB)
+
+	// controllers
+	userController := controllers.NewUserController(userRepository)
+
+	// services
+	userService := services.NewUserService(userRepository)
+
+	// handlers
+	userHandler := handlers.NewUserHandler(appKernel, userService)
+
 	API := appKernel.Server.Group("/api")
 
 	API.Group("/auth")
@@ -19,7 +31,8 @@ func API(appKernel *kernel.AppKernel) {
 	auth.Post("/login", controllers.Login)
 	auth.Post("/register", controllers.Register)
 
-	appKernel.Server.Use(shrine.New())
+	shrine := shrine.New(userRepository)
+	appKernel.Server.Use(shrine.Handler())
 
 	API.Get("/", func(c *fiber.Ctx) error {
 		return c.SendString("Hello, World 👋!")
@@ -27,12 +40,7 @@ func API(appKernel *kernel.AppKernel) {
 
 	auth.Get("/logout", controllers.Logout)
 
-	userRepository := repositories.NewUserRepository(appKernel.DB)
-	userController := controllers.NewUserController(userRepository)
 	API.Get("/userinfo", userController.GetUserInfo)
-
-	userService := services.NewUserService(userRepository)
-	userHandler := handlers.NewUserHandler(appKernel, userService)
 	API.Get("/me", userHandler.GetUserInfoHandler)
 
 	API.Get("/products", controllers.GetProducts)
