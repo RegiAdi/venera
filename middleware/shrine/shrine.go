@@ -52,7 +52,7 @@ func (shrine *Shrine) Handler() fiber.Handler {
 		if APIToken == "" {
 			return responses.SendResponse(c, responses.BaseResponse{
 				StatusCode: kernel.StatusUnauthorized,
-				Status:     "failed",
+				Status:     kernel.StatusSuccess,
 				Message:    "Unauthorized access",
 				Data:       nil,
 			})
