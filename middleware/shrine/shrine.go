@@ -29,11 +29,7 @@ func (shrine *Shrine) getAuthenticatedUser(APIToken string) (models.User, error)
 }
 
 func (shrine *Shrine) isAPITokenExpired(user models.User) bool {
-	if helpers.GetCurrentTime().After(user.TokenExpiresAt) {
-		return true
-	}
-
-	return false
+	return helpers.GetCurrentTime().After(user.TokenExpiresAt)
 }
 
 func (shrine *Shrine) setAPITokenToExpired(user models.User) error {
