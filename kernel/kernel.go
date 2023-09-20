@@ -25,4 +25,6 @@ const (
 	StatusSuccess      = "SUCCESS"
 	StatusUnauthorized = fiber.StatusUnauthorized
 	StatusBadRequest   = fiber.StatusBadRequest
+	StatusNotFound     = fiber.StatusNotFound
+	StatusOK           = fiber.StatusOK
 )

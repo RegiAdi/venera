@@ -33,16 +33,18 @@ func (userHandler *UserHandler) GetUserInfoHandler(c *fiber.Ctx) error {
 	userResponse, err := userHandler.userService.GetUserDetail(APIToken)
 
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"status":  "Failed",
-			"message": "User not found",
-			"data":    nil,
+		return responses.SendResponse(c, responses.BaseResponse{
+			StatusCode: kernel.StatusNotFound,
+			Status:     kernel.StatusFailed,
+			Message:    "User not found",
+			Data:       nil,
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"status":  "Success",
-		"message": "User retrieved successfully",
-		"data":    userResponse,
+	return responses.SendResponse(c, responses.BaseResponse{
+		StatusCode: kernel.StatusOK,
+		Status:     kernel.StatusSuccess,
+		Message:    "User retrieved successfully",
+		Data:       userResponse,
 	})
 }
