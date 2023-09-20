@@ -14,9 +14,6 @@ func API(appKernel *kernel.AppKernel) {
 	// repositories
 	userRepository := repositories.NewUserRepository(appKernel.DB)
 
-	// controllers
-	userController := controllers.NewUserController(userRepository)
-
 	// services
 	userService := services.NewUserService(userRepository)
 
@@ -40,7 +37,6 @@ func API(appKernel *kernel.AppKernel) {
 
 	auth.Get("/logout", controllers.Logout)
 
-	API.Get("/userinfo", userController.GetUserInfo)
 	API.Get("/me", userHandler.GetUserInfoHandler)
 
 	API.Get("/products", controllers.GetProducts)
