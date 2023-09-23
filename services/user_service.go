@@ -2,22 +2,20 @@ package services
 
 import "github.com/RegiAdi/hatchet/responses"
 
-type UserRepository interface {
+type userRepository interface {
 	GetUserByAPIToken(APIToken string) (responses.UserResponse, error)
 }
 
-type UserService struct {
-	userRepository UserRepository
+type userService struct {
+	userRepository userRepository
 }
 
-func NewUserService(userRepository UserRepository) *UserService {
-	return &UserService{
+func NewUserService(userRepository userRepository) *userService {
+	return &userService{
 		userRepository,
 	}
 }
 
-func (userService *UserService) GetUserDetail(APIToken string) (responses.UserResponse, error) {
-	userResponse, err := userService.userRepository.GetUserByAPIToken(APIToken)
-
-	return userResponse, err
+func (userService *userService) GetUserDetail(APIToken string) (responses.UserResponse, error) {
+	return userService.userRepository.GetUserByAPIToken(APIToken)
 }
