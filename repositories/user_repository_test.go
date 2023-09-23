@@ -99,3 +99,39 @@ func TestGetUserByAPIToken(t *testing.T) {
 	}
 
 }
+
+func TestGetAuthenticatedUser(t *testing.T) {
+	tests := []struct {
+		name         string
+		apiToken     string
+		errorMessage error
+		wantError    bool
+	}{
+		{
+			name:     "success",
+			apiToken: apiToken,
+		},
+		{
+			name:         "error",
+			apiToken:     faker.UUIDDigit(),
+			errorMessage: errors.New("failed get token"),
+			wantError:    true,
+		},
+	}
+	for _, test := range tests {
+		service := NewUserRepository(mongoClient.Database("test"))
+		assert.NotNil(t, service)
+
+		t.Run(test.name, func(t *testing.T) {
+			resp, err := service.GetAuthenticatedUser(test.apiToken)
+			if test.wantError {
+				assert.Error(t, err, test.errorMessage)
+				assert.Empty(t, resp)
+			} else {
+				assert.NotEmpty(t, resp, resp)
+				assert.NoError(t, err)
+			}
+		})
+	}
+
+}
