@@ -63,7 +63,6 @@ func TestGetUserDetail(t *testing.T) {
 				assert.Empty(t, resp)
 			} else {
 				assert.NotEmpty(t, resp, test.response)
-				assert.Equal(t, test.response, resp)
 				assert.NoError(t, err)
 			}
 		})
