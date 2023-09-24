@@ -11,16 +11,13 @@ type UserService interface {
 }
 
 type UserHandler struct {
-	appKernel   *kernel.AppKernel
 	userService UserService
 }
 
 func NewUserHandler(
-	appKernel *kernel.AppKernel,
 	userService UserService,
 ) *UserHandler {
 	return &UserHandler{
-		appKernel,
 		userService,
 	}
 }
