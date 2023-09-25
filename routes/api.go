@@ -18,7 +18,7 @@ func API(appKernel *kernel.AppKernel) {
 	userService := services.NewUserService(userRepository)
 
 	// handlers
-	userHandler := handlers.NewUserHandler(appKernel, userService)
+	userHandler := handlers.NewUserHandler(userService)
 
 	API := appKernel.Server.Group("/api")
 
