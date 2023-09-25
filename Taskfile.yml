@@ -1,0 +1,25 @@
+version: "3"
+
+tasks:
+  default:
+    cmds:
+      - echo "{{.GREETING}}"
+    silent: true
+
+  watch-linux:
+    platforms: [linux]
+    cmds:
+      - echo 'Watching Go project on Linux'
+      - air -d -c .air.windows.toml
+
+  watch-windows:
+    platforms: [windows]
+    cmds:
+      - echo 'Watching Go project on Windows'
+      - air -d -c .air.windows.toml
+
+  watch-macos:
+    platforms: [darwin]
+    cmds:
+      - echo 'Watching Go project on macOS'
+      - air -d -c .air.windows.toml
