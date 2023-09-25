@@ -5,7 +5,7 @@ tasks:
     platforms: [linux]
     cmds:
       - echo 'Watching Go project on Linux'
-      - air -d -c .air.windows.toml
+      - air -d -c .air.linux.toml
 
   watch-windows:
     platforms: [windows]
@@ -17,4 +17,4 @@ tasks:
     platforms: [darwin]
     cmds:
       - echo 'Watching Go project on macOS'
-      - air -d -c .air.windows.toml
+      - air -d -c .air.linux.toml
