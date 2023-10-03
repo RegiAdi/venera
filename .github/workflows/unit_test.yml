@@ -1,6 +1,6 @@
 name: unit-test
 run-name: ${{ github.actor }} is running unit testing
-on: [push]
+on: [push, pull_request]
 
 jobs:
   unit-test:

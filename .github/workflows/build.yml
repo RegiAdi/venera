@@ -1,6 +1,6 @@
 name: build
 run-name: ${{ github.actor }} is building ${{ github.event.repository.name }}
-on: [push]
+on: [push, pull_request]
 
 jobs:
   unit-test:
