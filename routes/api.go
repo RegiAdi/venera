@@ -1,6 +1,10 @@
 package routes
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+
 	"github.com/RegiAdi/hatchet/controllers"
 	"github.com/RegiAdi/hatchet/handlers"
 	"github.com/RegiAdi/hatchet/kernel"
@@ -9,6 +13,11 @@ import (
 	"github.com/RegiAdi/hatchet/services"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/rs/zerolog"
+)
+
+var (
+	Logger zerolog.Logger
 )
 
 func API(appKernel *kernel.AppKernel) {
@@ -35,7 +44,19 @@ func API(appKernel *kernel.AppKernel) {
 		TimeZone:      "Asia/Jakarta",
 		TimeFormat:    "2006-01-02 15:04:05",
 		DisableColors: true,
-		Format:        `{"time":"${time}","status":${status},"method":"${method}","host":"${host}","url":"${url}","path":"${path}","reqHeaders":"${reqHeaders}","queryParams":"${queryParams}","body":"${body}","ip":"${ip}"}`,
+		Format:        `{"time":"${time}","status":${status},"method":"${method}","host":"${host}","url":"${url}","path":"${path}","queryParams":"${queryParams}","body":"${body_request}","response_body":"${resBody}","ip":"${ip}","latency":"${latency}"}`,
+		CustomTags: map[string]logger.LogFunc{
+			"body_request": func(output logger.Buffer, c *fiber.Ctx, data *logger.Data, extraParam string) (int, error) {
+				if c.Request().Body() == nil {
+					return output.WriteString("")
+				}
+				buffer := new(bytes.Buffer)
+				if err := json.Compact(buffer, c.Request().Body()); err != nil {
+					fmt.Println("error json compact: ", err)
+				}
+				return output.WriteString(buffer.String())
+			},
+		},
 	}))
 
 	API.Get("/", func(c *fiber.Ctx) error {

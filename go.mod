@@ -5,6 +5,7 @@ go 1.21.0
 require (
 	github.com/gofiber/fiber/v2 v2.49.2
 	github.com/joho/godotenv v1.4.0
+	github.com/rs/zerolog v1.31.0
 	github.com/stretchr/testify v1.8.4
 	github.com/testcontainers/testcontainers-go v0.24.1
 	github.com/testcontainers/testcontainers-go/modules/mongodb v0.24.1
