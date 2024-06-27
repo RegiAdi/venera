@@ -1,4 +1,4 @@
-package shrine
+package middleware
 
 import (
 	"github.com/RegiAdi/hatchet/helpers"
@@ -14,33 +14,33 @@ type UserRepository interface {
 	UpdateAPITokenLastUsedTime(userID string) error
 }
 
-type Shrine struct {
+type Auth struct {
 	userRepository UserRepository
 }
 
-func New(userRepository UserRepository) *Shrine {
-	return &Shrine{
+func NewAuthMiddleware(userRepository UserRepository) *Auth {
+	return &Auth{
 		userRepository,
 	}
 }
 
-func (shrine *Shrine) getAuthenticatedUser(APIToken string) (models.User, error) {
-	return shrine.userRepository.GetAuthenticatedUser(APIToken)
+func (auth *Auth) getAuthenticatedUser(APIToken string) (models.User, error) {
+	return auth.userRepository.GetAuthenticatedUser(APIToken)
 }
 
-func (shrine *Shrine) isAPITokenExpired(user models.User) bool {
+func (auth *Auth) isAPITokenExpired(user models.User) bool {
 	return helpers.GetCurrentTime().After(user.TokenExpiresAt)
 }
 
-func (shrine *Shrine) setAPITokenToExpired(user models.User) error {
-	return shrine.userRepository.UpdateAPITokenExpirationTime(user.ID)
+func (auth *Auth) setAPITokenToExpired(user models.User) error {
+	return auth.userRepository.UpdateAPITokenExpirationTime(user.ID)
 }
 
-func (shrine *Shrine) setAPITokenLastUsedTime(user models.User) error {
-	return shrine.userRepository.UpdateAPITokenLastUsedTime(user.ID)
+func (auth *Auth) setAPITokenLastUsedTime(user models.User) error {
+	return auth.userRepository.UpdateAPITokenLastUsedTime(user.ID)
 }
 
-func (shrine *Shrine) Handler() fiber.Handler {
+func (auth *Auth) Handler() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		reqHeader := c.GetReqHeaders()
 		APIToken := reqHeader["Authorization"]
@@ -54,7 +54,7 @@ func (shrine *Shrine) Handler() fiber.Handler {
 			})
 		}
 
-		user, err := shrine.getAuthenticatedUser(APIToken)
+		user, err := auth.getAuthenticatedUser(APIToken)
 		if err != nil {
 			return responses.SendResponse(c, responses.BaseResponse{
 				StatusCode: kernel.StatusUnauthorized,
@@ -64,8 +64,8 @@ func (shrine *Shrine) Handler() fiber.Handler {
 			})
 		}
 
-		if shrine.isAPITokenExpired(user) {
-			err := shrine.setAPITokenToExpired(user)
+		if auth.isAPITokenExpired(user) {
+			err := auth.setAPITokenToExpired(user)
 			if err != nil {
 				return responses.SendResponse(c, responses.BaseResponse{
 					StatusCode: kernel.StatusBadRequest,
@@ -84,7 +84,7 @@ func (shrine *Shrine) Handler() fiber.Handler {
 
 		}
 
-		err = shrine.setAPITokenLastUsedTime(user)
+		err = auth.setAPITokenLastUsedTime(user)
 
 		if err != nil {
 			return responses.SendResponse(c, responses.BaseResponse{

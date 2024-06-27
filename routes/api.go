@@ -8,7 +8,7 @@ import (
 	"github.com/RegiAdi/hatchet/controllers"
 	"github.com/RegiAdi/hatchet/handlers"
 	"github.com/RegiAdi/hatchet/kernel"
-	"github.com/RegiAdi/hatchet/middleware/shrine"
+	"github.com/RegiAdi/hatchet/middleware"
 	"github.com/RegiAdi/hatchet/repositories"
 	"github.com/RegiAdi/hatchet/services"
 	"github.com/gofiber/fiber/v2"
@@ -38,8 +38,9 @@ func API(appKernel *kernel.AppKernel) {
 	auth.Post("/login", controllers.Login)
 	auth.Post("/register", controllers.Register)
 
-	shrine := shrine.New(userRepository)
-	appKernel.Server.Use(shrine.Handler())
+	authMiddleware := middleware.NewAuthMiddleware(userRepository)
+	appKernel.Server.Use(authMiddleware.Handler())
+
 	appKernel.Server.Use(logger.New(logger.Config{
 		TimeZone:      "Asia/Jakarta",
 		TimeFormat:    "2006-01-02 15:04:05",
