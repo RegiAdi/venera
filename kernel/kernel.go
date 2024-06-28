@@ -21,8 +21,8 @@ func NewAppKernel() *AppKernel {
 }
 
 const (
-	StatusFailed       = "FAILED"
-	StatusSuccess      = "SUCCESS"
+	StatusFailed       = "failed"
+	StatusSuccess      = "success"
 	StatusUnauthorized = fiber.StatusUnauthorized
 	StatusBadRequest   = fiber.StatusBadRequest
 	StatusNotFound     = fiber.StatusNotFound

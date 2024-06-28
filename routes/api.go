@@ -25,9 +25,11 @@ func API(appKernel *kernel.AppKernel) {
 	userRepository := repositories.NewUserRepository(appKernel.DB)
 
 	// services
+	authService := services.NewAuthService(userRepository)
 	userService := services.NewUserService(userRepository)
 
 	// handlers
+	authHandler := handlers.NewAuthHandler(authService)
 	userHandler := handlers.NewUserHandler(userService)
 
 	API := appKernel.Server.Group("/api")
@@ -35,7 +37,7 @@ func API(appKernel *kernel.AppKernel) {
 	API.Group("/auth")
 	auth := API.Group("/auth")
 
-	auth.Post("/login", controllers.Login)
+	auth.Post("/login", authHandler.LoginHandler)
 	auth.Post("/register", controllers.Register)
 
 	authMiddleware := middleware.NewAuthMiddleware(userRepository)

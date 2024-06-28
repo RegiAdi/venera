@@ -2,87 +2,14 @@ package controllers
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/RegiAdi/hatchet/helpers"
 	"github.com/RegiAdi/hatchet/kernel"
 	"github.com/RegiAdi/hatchet/models"
-	"github.com/RegiAdi/hatchet/responses"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-func Login(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	userCollection := kernel.Mongo.DB.Collection("users")
-
-	var request models.User
-	var user models.User
-	var userLoginResponse responses.UserLoginResponse
-
-	if err := c.BodyParser(&request); err != nil {
-		log.Println(err)
-
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to parse body",
-			"error":   err,
-		})
-	}
-
-	err := userCollection.FindOne(ctx, bson.D{{Key: "username", Value: request.Username}}).Decode(&user)
-
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"success": false,
-			"message": "User not found",
-			"error":   err,
-		})
-	}
-
-	if !helpers.CheckPasswordHash(request.Password, user.Password) {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"success": false,
-			"message": "Password do not match",
-			"error":   nil,
-		})
-	}
-
-	APIToken, _ := helpers.GenerateAPIToken()
-	APITokenExpirationDate := helpers.GenerateAPITokenExpiration()
-
-	userID, _ := primitive.ObjectIDFromHex(user.ID)
-	filter := bson.D{{Key: "_id", Value: userID}}
-	update := bson.D{
-		{Key: "$set", Value: bson.D{
-			{Key: "api_token", Value: APIToken},
-			{Key: "device_name", Value: request.DeviceName},
-			{Key: "token_expires_at", Value: APITokenExpirationDate},
-			{Key: "updated_at", Value: helpers.GetCurrentTime()},
-		},
-		}}
-
-	err = userCollection.FindOneAndUpdate(context.TODO(), filter, update, options.FindOneAndUpdate().SetReturnDocument(options.After)).Decode(&userLoginResponse)
-
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"success": false,
-			"message": "Failed to generate API Token",
-			"error":   err,
-		})
-	}
-
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"success": true,
-		"message": "User authenticated successfully",
-		"data":    userLoginResponse,
-	})
-}
 
 func Logout(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
