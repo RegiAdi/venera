@@ -3,7 +3,7 @@ package helpers
 import (
 	"time"
 
-	"github.com/RegiAdi/hatchet/config"
+	"github.com/RegiAdi/venera/config"
 )
 
 func GetCurrentTime() time.Time {

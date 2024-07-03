@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 	"time"
 
-	"github.com/RegiAdi/hatchet/config"
+	"github.com/RegiAdi/venera/config"
 )
 
 // GenerateRandomBytes returns securely generated random bytes.

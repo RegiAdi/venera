@@ -1,4 +1,4 @@
-module github.com/RegiAdi/hatchet
+module github.com/RegiAdi/venera
 
 go 1.21.0
 

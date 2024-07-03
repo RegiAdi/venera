@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/RegiAdi/hatchet/models"
+	"github.com/RegiAdi/venera/models"
 	"github.com/go-faker/faker/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/testcontainers/testcontainers-go"

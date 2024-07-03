@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"github.com/RegiAdi/hatchet/kernel"
-	"github.com/RegiAdi/hatchet/responses"
+	"github.com/RegiAdi/venera/kernel"
+	"github.com/RegiAdi/venera/responses"
 	"github.com/gofiber/fiber/v2"
 )
 

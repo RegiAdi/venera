@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"github.com/RegiAdi/hatchet/config"
+	"github.com/RegiAdi/venera/config"
 	"golang.org/x/crypto/bcrypt"
 )
 

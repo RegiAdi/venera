@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	servicemocks "github.com/RegiAdi/hatchet/mocks/services"
-	"github.com/RegiAdi/hatchet/responses"
+	servicemocks "github.com/RegiAdi/venera/mocks/services"
+	"github.com/RegiAdi/venera/responses"
 	"github.com/go-faker/faker/v4"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stretchr/testify/assert"

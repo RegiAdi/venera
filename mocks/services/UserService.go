@@ -3,7 +3,7 @@
 package servicemocks
 
 import (
-	responses "github.com/RegiAdi/hatchet/responses"
+	responses "github.com/RegiAdi/venera/responses"
 	mock "github.com/stretchr/testify/mock"
 )
 

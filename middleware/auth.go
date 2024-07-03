@@ -1,10 +1,10 @@
 package middleware
 
 import (
-	"github.com/RegiAdi/hatchet/helpers"
-	"github.com/RegiAdi/hatchet/kernel"
-	"github.com/RegiAdi/hatchet/models"
-	"github.com/RegiAdi/hatchet/responses"
+	"github.com/RegiAdi/venera/helpers"
+	"github.com/RegiAdi/venera/kernel"
+	"github.com/RegiAdi/venera/models"
+	"github.com/RegiAdi/venera/responses"
 	"github.com/gofiber/fiber/v2"
 )
 

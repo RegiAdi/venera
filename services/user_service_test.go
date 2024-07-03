@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	repositorymocks "github.com/RegiAdi/hatchet/mocks/repositories"
-	"github.com/RegiAdi/hatchet/responses"
+	repositorymocks "github.com/RegiAdi/venera/mocks/repositories"
+	"github.com/RegiAdi/venera/responses"
 	"github.com/go-faker/faker/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

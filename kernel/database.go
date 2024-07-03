@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/RegiAdi/hatchet/config"
+	"github.com/RegiAdi/venera/config"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/RegiAdi/hatchet/config"
-	"github.com/RegiAdi/hatchet/kernel"
-	"github.com/RegiAdi/hatchet/routes"
+	"github.com/RegiAdi/venera/config"
+	"github.com/RegiAdi/venera/kernel"
+	"github.com/RegiAdi/venera/routes"
 )
 
 func main() {

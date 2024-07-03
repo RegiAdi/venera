@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/RegiAdi/hatchet/helpers"
-	"github.com/RegiAdi/hatchet/kernel"
-	"github.com/RegiAdi/hatchet/models"
+	"github.com/RegiAdi/venera/helpers"
+	"github.com/RegiAdi/venera/kernel"
+	"github.com/RegiAdi/venera/models"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 )

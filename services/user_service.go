@@ -1,6 +1,6 @@
 package services
 
-import "github.com/RegiAdi/hatchet/responses"
+import "github.com/RegiAdi/venera/responses"
 
 type userRepository interface {
 	GetUserByAPIToken(APIToken string) (responses.UserResponse, error)
