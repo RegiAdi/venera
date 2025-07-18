@@ -137,3 +137,44 @@ func (userRepository *UserRepository) UpdateAPITokenLastUsedTime(userID string) 
 
 	return err
 }
+
+func (userRepository *UserRepository) GetUserByEmail(email string) (models.User, error) {
+	userCollection := userRepository.DB.Collection("users")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	var user models.User
+
+	err := userCollection.FindOne(ctx, bson.D{{Key: "email", Value: email}}).Decode(&user)
+
+	return user, err
+}
+
+func (userRepository *UserRepository) CreateUser(user models.User) (responses.UserResponse, error) {
+	userCollection := userRepository.DB.Collection("users")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	result, err := userCollection.InsertOne(ctx, user)
+	if err != nil {
+		return responses.UserResponse{}, err
+	}
+
+	// Set the inserted ID to the user response
+	userResponse := responses.UserResponse{
+		ID:         result.InsertedID.(primitive.ObjectID).Hex(),
+		Usercode:   user.Usercode,
+		Username:   user.Username,
+		Email:      user.Email,
+		Fullname:   user.Fullname,
+		Phone:      user.Phone,
+		Address:    user.Address,
+		DeviceName: user.DeviceName,
+		CreatedAt:  user.CreatedAt,
+		UpdatedAt:  user.UpdatedAt,
+	}
+
+	return userResponse, nil
+}

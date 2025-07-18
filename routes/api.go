@@ -38,7 +38,7 @@ func API(appKernel *kernel.AppKernel) {
 	auth := API.Group("/auth")
 
 	auth.Post("/login", authHandler.LoginHandler)
-	auth.Post("/register", controllers.Register)
+	auth.Post("/register", authHandler.RegisterHandler)
 
 	authMiddleware := middleware.NewAuthMiddleware(userRepository)
 	appKernel.Server.Use(authMiddleware.Handler())

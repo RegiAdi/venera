@@ -11,6 +11,7 @@ import (
 
 type AuthService interface {
 	LoginService(request models.User) (responses.UserLoginResponse, error)
+	RegisterService(request models.User) (responses.UserResponse, error)
 }
 
 type AuthHandler struct {
@@ -91,5 +92,40 @@ func (authHandler *AuthHandler) LoginHandler(c *fiber.Ctx) error {
 		Status:     kernel.StatusSuccess,
 		Message:    "User authenticated successfully",
 		Data:       userLoginResponse,
+	})
+}
+
+func (authHandler *AuthHandler) RegisterHandler(c *fiber.Ctx) error {
+	var request models.User
+	var userResponse responses.UserResponse
+
+	if err := c.BodyParser(&request); err != nil {
+		return responses.SendResponse(c, responses.BaseResponse{
+			StatusCode: kernel.StatusBadRequest,
+			Status:     kernel.StatusFailed,
+			Message:    "Failed to handle request",
+			Data:       err,
+		})
+	}
+
+	userResponse, err := authHandler.authService.RegisterService(request)
+	if err != nil {
+		switch {
+		// You can add more specific error handling here if needed
+		default:
+			return responses.SendResponse(c, responses.BaseResponse{
+				StatusCode: kernel.StatusBadRequest,
+				Status:     kernel.StatusFailed,
+				Message:    err.Error(),
+				Data:       nil,
+			})
+		}
+	}
+
+	return responses.SendResponse(c, responses.BaseResponse{
+		StatusCode: kernel.StatusCreated,
+		Status:     kernel.StatusSuccess,
+		Message:    "User created successfully",
+		Data:       userResponse,
 	})
 }

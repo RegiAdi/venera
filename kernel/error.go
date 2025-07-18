@@ -8,4 +8,6 @@ var (
 	ErrPasswordUnmatch        = errors.New("password do not match")
 	ErrGenerateAPITokenFailed = errors.New("failed to generate api token")
 	ErrInvalidObjectID        = errors.New("invalid objectid")
+	ErrUserAlreadyExists      = errors.New("username already exists")
+	ErrEmailAlreadyExists     = errors.New("email already exists")
 )

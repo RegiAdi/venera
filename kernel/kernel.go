@@ -27,4 +27,5 @@ const (
 	StatusBadRequest   = fiber.StatusBadRequest
 	StatusNotFound     = fiber.StatusNotFound
 	StatusOK           = fiber.StatusOK
+	StatusCreated      = fiber.StatusCreated
 )
