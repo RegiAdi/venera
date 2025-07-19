@@ -1,7 +1,13 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/RegiAdi/venera/config"
 	"github.com/RegiAdi/venera/kernel"
@@ -9,14 +15,32 @@ import (
 )
 
 func main() {
-	appKernel := kernel.NewAppKernel()
+	appKernel, err := kernel.NewAppKernel()
+	if err != nil {
+		log.Fatalf("App failed to initialize: %v", err)
+	}
 
 	routes.API(appKernel)
 
-	err := appKernel.Server.Listen(":" + config.GetAppPort())
+	// Channel to listen for OS signals
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 
-	if err != nil {
-		log.Fatal("App failed to start.")
-		panic(err)
-	}
+	// Start server in a goroutine
+	go func() {
+		serverAddr := fmt.Sprintf(":%s", config.GetAppPort())
+		log.Printf("Server starting on %s", serverAddr)
+		if err := appKernel.Server.Listen(serverAddr); err != nil {
+			log.Fatalf("Server failed to start: %v", err)
+		}
+	}()
+
+	// Block until a signal is received
+	<-quit
+	log.Println("Shutdown signal received, initiating graceful shutdown...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	appKernel.Shutdown(ctx)
 }
