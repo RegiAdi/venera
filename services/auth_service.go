@@ -12,6 +12,7 @@ type UserRepository interface {
 	UpdateAPIToken(request models.User) (responses.UserLoginResponse, error)
 	GetUserByEmail(email string) (models.User, error)
 	CreateUser(request models.User) (responses.UserResponse, error)
+	UpdateUserAPIToken(APIToken string) error
 }
 
 type AuthService struct {
@@ -73,4 +74,9 @@ func (authService *AuthService) RegisterService(request models.User) (responses.
 	}
 
 	return userResponse, nil
+}
+
+// LogoutService handles user logout by clearing their API token
+func (authService *AuthService) LogoutService(APIToken string) error {
+	return authService.userRepository.UpdateUserAPIToken(APIToken)
 }

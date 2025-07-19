@@ -12,6 +12,7 @@ import (
 type AuthService interface {
 	LoginService(request models.User) (responses.UserLoginResponse, error)
 	RegisterService(request models.User) (responses.UserResponse, error)
+	LogoutService(APIToken string) error
 }
 
 type AuthHandler struct {
@@ -127,5 +128,36 @@ func (authHandler *AuthHandler) RegisterHandler(c *fiber.Ctx) error {
 		Status:     kernel.StatusSuccess,
 		Message:    "User created successfully",
 		Data:       userResponse,
+	})
+}
+
+func (authHandler *AuthHandler) LogoutHandler(c *fiber.Ctx) error {
+	reqHeader := c.GetReqHeaders()
+	APIToken := reqHeader["Authorization"]
+
+	if APIToken == "" {
+		return responses.SendResponse(c, responses.BaseResponse{
+			StatusCode: kernel.StatusUnauthorized,
+			Status:     kernel.StatusFailed,
+			Message:    "Unauthorized access",
+			Data:       nil,
+		})
+	}
+
+	err := authHandler.authService.LogoutService(APIToken)
+	if err != nil {
+		return responses.SendResponse(c, responses.BaseResponse{
+			StatusCode: kernel.StatusBadRequest,
+			Status:     kernel.StatusFailed,
+			Message:    "Failed to delete API Token",
+			Data:       nil,
+		})
+	}
+
+	return responses.SendResponse(c, responses.BaseResponse{
+		StatusCode: kernel.StatusOK,
+		Status:     kernel.StatusSuccess,
+		Message:    "User logged out successfully",
+		Data:       nil,
 	})
 }

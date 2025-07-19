@@ -34,7 +34,6 @@ func API(appKernel *kernel.AppKernel) {
 
 	API := appKernel.Server.Group("/api")
 
-	API.Group("/auth")
 	auth := API.Group("/auth")
 
 	auth.Post("/login", authHandler.LoginHandler)
@@ -66,7 +65,7 @@ func API(appKernel *kernel.AppKernel) {
 		return c.SendString("Hello, World 👋!")
 	})
 
-	auth.Get("/logout", controllers.Logout)
+	API.Post("/logout", authHandler.LogoutHandler)
 
 	API.Get("/me", userHandler.GetUserInfoHandler)
 

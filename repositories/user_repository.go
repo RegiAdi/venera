@@ -178,3 +178,24 @@ func (userRepository *UserRepository) CreateUser(user models.User) (responses.Us
 
 	return userResponse, nil
 }
+
+func (repository *UserRepository) UpdateUserAPIToken(APIToken string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	filter := bson.D{{Key: "api_token", Value: APIToken}}
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "api_token", Value: nil},
+			{Key: "token_expires_at", Value: time.Time{}},
+			{Key: "updated_at", Value: helpers.GetCurrentTime()},
+		}},
+	}
+
+	result, err := repository.DB.Collection("users").UpdateOne(ctx, filter, update)
+	if err != nil || result.ModifiedCount < 1 {
+		return kernel.ErrUserUpdateFailed
+	}
+
+	return nil
+}
