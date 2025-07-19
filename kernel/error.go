@@ -10,4 +10,10 @@ var (
 	ErrInvalidObjectID        = errors.New("invalid objectid")
 	ErrUserAlreadyExists      = errors.New("username already exists")
 	ErrEmailAlreadyExists     = errors.New("email already exists")
+
+	// Product related errors
+	ErrProductNotFound     = errors.New("product not found")
+	ErrProductCreateFailed = errors.New("failed to create product")
+	ErrProductUpdateFailed = errors.New("failed to update product")
+	ErrProductDeleteFailed = errors.New("failed to delete product")
 )

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/RegiAdi/venera/controllers"
 	"github.com/RegiAdi/venera/handlers"
 	"github.com/RegiAdi/venera/kernel"
 	"github.com/RegiAdi/venera/middleware"
@@ -23,14 +22,17 @@ var (
 func API(appKernel *kernel.AppKernel) {
 	// repositories
 	userRepository := repositories.NewUserRepository(appKernel.DB)
+	productRepository := repositories.NewProductRepository(appKernel.DB)
 
 	// services
 	authService := services.NewAuthService(userRepository)
 	userService := services.NewUserService(userRepository)
+	productService := services.NewProductService(productRepository)
 
 	// handlers
 	authHandler := handlers.NewAuthHandler(authService)
 	userHandler := handlers.NewUserHandler(userService)
+	productHandler := handlers.NewProductHandler(productService)
 
 	API := appKernel.Server.Group("/api")
 
@@ -69,9 +71,10 @@ func API(appKernel *kernel.AppKernel) {
 
 	API.Get("/me", userHandler.GetUserInfoHandler)
 
-	API.Get("/products", controllers.GetProducts)
-	API.Get("/products/:id", controllers.GetProduct)
-	API.Post("/products", controllers.CreateProduct)
-	API.Put("/products/:id", controllers.UpdateProduct)
-	API.Delete("/products/:id", controllers.DeleteProduct)
+	// Product routes
+	API.Get("/products", productHandler.GetProductsHandler)
+	API.Get("/products/:id", productHandler.GetProductHandler)
+	API.Post("/products", productHandler.CreateProductHandler)
+	API.Put("/products/:id", productHandler.UpdateProductHandler)
+	API.Delete("/products/:id", productHandler.DeleteProductHandler)
 }
